@@ -34,6 +34,7 @@ interface Auction {
 
 export default function ManageAuctionsPage() {
   const [auctions, setAuctions] = useState<Auction[]>([])
+  const [properties, setProperties] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(true)
@@ -64,6 +65,17 @@ export default function ManageAuctionsPage() {
 
     fetchAuctions()
   }, [toast])
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      const propertiesCollection = collection(db, 'properties');
+      const propertiesSnapshot = await getDocs(propertiesCollection);
+      const propertiesList = propertiesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProperties(propertiesList);
+    };
+
+    fetchProperties();
+  }, []);
 
   const handleUpdateAuctionStatus = async (auctionId: string, newStatus: "pending" | "active" | "ended" | "sold") => {
     try {
@@ -152,7 +164,7 @@ export default function ManageAuctionsPage() {
                     <TableRow key={auction.id}>
                       <TableCell>{auction.title}</TableCell>
                       <TableCell>€{auction.startingPrice.toLocaleString()}</TableCell>
-                      <TableCell>€{auction.currentBid.toLocaleString()}</TableCell>
+                      <TableCell>€{auction.currentBid ? auction.currentBid.toLocaleString() : 'N/A'}</TableCell>
                       <TableCell>{auction.startTime.toLocaleString()}</TableCell>
                       <TableCell>{auction.endTime.toLocaleString()}</TableCell>
                       <TableCell>{auction.status}</TableCell>
@@ -207,6 +219,32 @@ export default function ManageAuctionsPage() {
                 </TableBody>
               </Table>
             )}
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Property List</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Property Title</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {properties.map(property => (
+                  <TableRow key={property.id}>
+                    <TableCell>{property.title}</TableCell>
+                    <TableCell>
+                      <Button>Edit</Button>
+                      <Button variant="destructive">Delete</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>

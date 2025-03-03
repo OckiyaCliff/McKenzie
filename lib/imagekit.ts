@@ -94,3 +94,5 @@ export async function uploadMedia({ file, type, folder = "general" }: MediaFile)
     throw error
   }
 }
+
+export const uploadImage = uploadMedia;

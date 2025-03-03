@@ -5,7 +5,7 @@ import { collection, query, where, orderBy, limit, getDocs, type DocumentData } 
 import { db } from "@/lib/firebase"
 
 interface UseAuctionsOptions {
-  status?: "live" | "upcoming" | "closed"
+  status?: "live" | "upcoming" | "closed" | "active"
   propertyType?: string
   location?: string
   priceRange?: { min: number; max: number }
@@ -143,4 +143,3 @@ export function useAuctions(options: UseAuctionsOptions = {}) {
     refresh: () => fetchAuctions(),
   }
 }
-
