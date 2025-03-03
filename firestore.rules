@@ -35,6 +35,10 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
       allow update, delete: if isAdmin();
     }
+
+    // New rules for properties
+    match /properties/{propertyId} {
+      allow read, write: if isAdmin(); // Allow admins to perform CRUD operations
+    }
   }
 }
-
