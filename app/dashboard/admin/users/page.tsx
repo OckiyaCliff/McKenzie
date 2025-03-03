@@ -159,7 +159,7 @@ export default function ManageUsersPage() {
                           <DialogTrigger asChild>
                             <Button variant="outline">Edit Balance</Button>
                           </DialogTrigger>
-                          <DialogContent>
+                          <DialogContent aria-describedby="user-dialog-description">
                             <DialogHeader>
                               <DialogTitle>Edit Token Balance</DialogTitle>
                             </DialogHeader>
@@ -176,6 +176,9 @@ export default function ManageUsersPage() {
                                   onChange={(e) => handleEditBalance(user.id, Number(e.target.value))}
                                 />
                               </div>
+                            </div>
+                            <div id="user-dialog-description" className="sr-only">
+                              Dialog showing detailed information about the selected user
                             </div>
                           </DialogContent>
                         </Dialog>
@@ -197,4 +200,3 @@ export default function ManageUsersPage() {
     </AdminDashboardLayout>
   )
 }
-

@@ -165,7 +165,7 @@ export default function ManageAuctionsPage() {
                                 Edit
                               </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent aria-describedby="auction-dialog-description">
                               <DialogHeader>
                                 <DialogTitle>Edit Auction</DialogTitle>
                                 <DialogDescription>Update auction details or change its status.</DialogDescription>
@@ -187,6 +187,9 @@ export default function ManageAuctionsPage() {
                                     <option value="sold">Sold</option>
                                   </select>
                                 </div>
+                              </div>
+                              <div id="auction-dialog-description" className="sr-only">
+                                Dialog showing detailed information about the selected auction
                               </div>
                               <DialogFooter>
                                 <Button type="submit">Save changes</Button>
@@ -210,4 +213,3 @@ export default function ManageAuctionsPage() {
     </AdminDashboardLayout>
   )
 }
-

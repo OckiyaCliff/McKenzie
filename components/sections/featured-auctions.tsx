@@ -5,9 +5,11 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Check } from "lucide-react"
+import { ArrowRight, Check, Timer } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 import { useAuctions } from "@/lib/hooks/use-auctions"
+import { formatTokens, formatFiat } from "@/lib/utils/token"
+import { formatDistanceToNow } from "date-fns"
 
 export function FeaturedAuctions() {
   const { auctions, loading, error } = useAuctions({ status: "active", limit: 6 })
@@ -28,7 +30,7 @@ export function FeaturedAuctions() {
     <section className="py-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">Featured Property Auctions</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold mb-4 md:mb-0">Active Property Auctions</h2>
           <Link href="/auctions">
             <Button variant="outline">
               View All
@@ -61,12 +63,22 @@ export function FeaturedAuctions() {
                   <CardContent className="p-4 flex-grow">
                     <CardTitle className="text-lg mb-2">{auction.title}</CardTitle>
                     <CardDescription>{auction.location || "Location not specified"}</CardDescription>
-                    <p className="text-xl font-bold text-primary mt-2">
-                      Current Bid: €{auction.currentBid.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Ends: {new Date(auction.endDate.seconds * 1000).toLocaleString()}
-                    </p>
+                    <div className="space-y-2 mt-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Current Bid:</span>
+                        <span className="text-lg font-bold text-primary">{formatTokens(auction.currentBidInTokens)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Fiat Value:</span>
+                        <span className="text-sm text-muted-foreground">{formatFiat(auction.currentBid)}</span>
+                      </div>
+                      <div className="flex items-center text-sm text-muted-foreground mt-2">
+                        <Timer className="w-4 h-4 mr-1" />
+                        <span>
+                          Ends in: {formatDistanceToNow(new Date(auction.endTime.seconds * 1000), { addSuffix: true })}
+                        </span>
+                      </div>
+                    </div>
                   </CardContent>
                   <CardFooter>
                     <Link href={`/auctions/${auction.id}`} className="w-full">
@@ -84,4 +96,3 @@ export function FeaturedAuctions() {
     </section>
   )
 }
-

@@ -21,7 +21,7 @@ export function usePagination<T extends DocumentData = DocumentData>({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [hasMore, setHasMore] = useState(true)
-  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<T> | null>(null)
+  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null)
 
   // Function to create the base query
   const createBaseQuery = () => {
@@ -30,6 +30,14 @@ export function usePagination<T extends DocumentData = DocumentData>({
       orderBy(orderByField, orderDirection),
       limit(pageSize)
     )
+  }
+
+  // Function to convert document to type T
+  const convertDoc = (doc: QueryDocumentSnapshot<DocumentData>): T => {
+    return {
+      id: doc.id,
+      ...doc.data()
+    } as unknown as T
   }
 
   // Function to load initial data
@@ -41,13 +49,10 @@ export function usePagination<T extends DocumentData = DocumentData>({
       const baseQuery = createBaseQuery()
       const snapshot = await getDocs(baseQuery)
 
-      const docs = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-      } as T))
+      const docs = snapshot.docs.map(convertDoc)
 
       setItems(docs)
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1] as QueryDocumentSnapshot<T> || null)
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null)
       setHasMore(snapshot.docs.length === pageSize)
     } catch (err) {
       setError(err as Error)
@@ -74,13 +79,10 @@ export function usePagination<T extends DocumentData = DocumentData>({
 
       const snapshot = await getDocs(nextQuery)
 
-      const newDocs = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-      } as T))
+      const newDocs = snapshot.docs.map(convertDoc)
 
       setItems(prev => [...prev, ...newDocs])
-      setLastVisible(snapshot.docs[snapshot.docs.length - 1] as QueryDocumentSnapshot<T> || null)
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1] || null)
       setHasMore(snapshot.docs.length === pageSize)
     } catch (err) {
       setError(err as Error)
